@@ -39,6 +39,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+app.get('/', (req, res) => {
+  res.send('🚀 Lion Lanka API is running');
+});
+
 // Health check route
 app.get('/api/health', (req, res) => {
   res.status(200).json({
