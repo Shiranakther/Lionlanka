@@ -43,6 +43,11 @@ app.get('/', (req, res) => {
   res.send('🚀 Lion Lanka API is running');
 });
 
+// Root welcome route
+app.get('/', (req, res) => {
+  res.send('Lion Lanka API is successfully running on Vercel! 🚀');
+});
+
 // Health check route
 app.get('/api/health', (req, res) => {
   res.status(200).json({
