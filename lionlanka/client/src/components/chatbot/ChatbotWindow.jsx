@@ -147,7 +147,7 @@ const ChatbotWindow = ({ isOpen, onClose }) => {
 
   const windowClasses = isFullScreen 
     ? "fixed inset-0 z-50 flex flex-col bg-deep/95 backdrop-blur-md sm:p-4" 
-    : "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] h-[calc(100vh-8rem)] max-h-[700px] sm:top-auto sm:translate-y-0 sm:bottom-24 sm:left-auto sm:translate-x-0 sm:right-7 sm:w-[400px] sm:h-[600px] bg-deep/95 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden z-50";
+    : "fixed inset-x-4 top-16 bottom-24 z-50 flex flex-col overflow-hidden bg-deep/95 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl sm:inset-x-auto sm:top-auto sm:bottom-24 sm:right-7 sm:w-[400px] sm:h-[600px]";
 
   return (
     <AnimatePresence>
