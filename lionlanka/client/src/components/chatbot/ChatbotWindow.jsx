@@ -112,37 +112,23 @@ const ChatbotWindow = ({ isOpen, onClose }) => {
 
   const handleTTS = (id, text) => {
     if (readingId === id) {
-      if (audioRef.current) audioRef.current.pause();
       window.speechSynthesis.cancel();
       setReadingId(null);
       return;
     }
 
-    if (audioRef.current) audioRef.current.pause();
     window.speechSynthesis.cancel();
     
     const { cleanText } = parseChatTags(text);
-    const plainText = cleanText.replace(/[*#`_]/g, '').slice(0, 200); // GTranslate limit
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${chatLang}&q=${encodeURIComponent(plainText)}`;
+    const plainText = cleanText.replace(/[*#`_]/g, '');
     
-    const audio = new Audio(url);
-    audioRef.current = audio;
-    audio.onended = () => setReadingId(null);
-    audio.onerror = () => {
-      // Fallback to speech synthesis if network fails
-      const utterance = new SpeechSynthesisUtterance(plainText);
-      utterance.lang = chatLang === 'si' ? 'si-LK' : chatLang === 'ta' ? 'ta-IN' : 'en-US';
-      utterance.onend = () => setReadingId(null);
-      window.speechSynthesis.speak(utterance);
-    };
+    const utterance = new SpeechSynthesisUtterance(plainText);
+    utterance.lang = chatLang === 'si' ? 'si-LK' : chatLang === 'ta' ? 'ta-IN' : 'en-US';
+    utterance.onend = () => setReadingId(null);
+    utterance.onerror = () => setReadingId(null);
     
     setReadingId(id);
-    audio.play().catch(e => {
-       const utterance = new SpeechSynthesisUtterance(plainText);
-       utterance.lang = chatLang === 'si' ? 'si-LK' : chatLang === 'ta' ? 'ta-IN' : 'en-US';
-       utterance.onend = () => setReadingId(null);
-       window.speechSynthesis.speak(utterance);
-    });
+    window.speechSynthesis.speak(utterance);
   };
 
   const windowClasses = isFullScreen 
