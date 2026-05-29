@@ -7,7 +7,6 @@ import {
   Users,
   FileText,
   MapPin,
-  MessageSquare,
   Settings,
   Menu,
   X,
@@ -38,7 +37,6 @@ const AdminLayout = () => {
     { name: 'Users', path: '/admin/users', icon: Users },
     { name: 'Articles', path: '/admin/articles', icon: FileText },
     { name: 'Places', path: '/admin/places', icon: MapPin },
-    { name: 'Chats', path: '/admin/chats', icon: MessageSquare },
     { name: 'Homepage Manager', path: '/admin/homepage', icon: Settings },
   ];
 

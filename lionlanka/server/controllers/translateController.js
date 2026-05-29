@@ -11,7 +11,7 @@ const translateText = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Text and targetLanguage are required' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
     
     const prompt = `Translate the following HTML content into ${targetLanguage}. 
     CRITICAL INSTRUCTIONS:

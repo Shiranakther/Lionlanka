@@ -137,15 +137,11 @@ const CreateArticle = () => {
     setAiGeneratedImage(null);
     try {
       const res = await generateImageAPI(aiPrompt);
-      // Backend returns raw string or markdown. We'll extract base64 or URL.
-      let imageStr = res.data.data;
-      // If it's markdown ![alt](url), extract url
-      const match = imageStr.match(/!\[.*?\]\((.*?)\)/);
-      if (match) imageStr = match[1];
+      const imageStr = res.data.data;
       
-      // If it doesn't have data: prefix and is base64
-      if (imageStr.length > 1000 && !imageStr.startsWith('http') && !imageStr.startsWith('data:')) {
-        imageStr = `data:image/jpeg;base64,${imageStr}`;
+      if (!imageStr) {
+        toast.error('No image was returned. Try a different prompt.');
+        return;
       }
       
       setAiGeneratedImage(imageStr);
