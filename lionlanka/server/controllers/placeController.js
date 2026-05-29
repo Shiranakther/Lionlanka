@@ -88,3 +88,50 @@ exports.updatePlace = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Lookup exact coordinates by place name
+// @route   POST /api/places/coordinates-lookup
+// @access  Public
+exports.coordinatesLookup = async (req, res, next) => {
+  try {
+    const { names } = req.body;
+
+    if (!names || !Array.isArray(names) || names.length === 0) {
+      return res.status(400).json({ success: false, message: 'names array is required' });
+    }
+
+    const results = {};
+
+    for (const name of names) {
+      // Try exact match first, then case-insensitive regex
+      let place = await Place.findOne(
+        { name: { $regex: new RegExp(`^${name.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}$`, 'i') } },
+        { name: 1, 'location.coordinates': 1 }
+      );
+
+      // If no exact match, try partial/fuzzy match
+      if (!place) {
+        const words = name.trim().split(/\s+/).filter(w => w.length > 2);
+        if (words.length > 0) {
+          const pattern = words.map(w => w.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')).join('.*');
+          place = await Place.findOne(
+            { name: { $regex: new RegExp(pattern, 'i') } },
+            { name: 1, 'location.coordinates': 1 }
+          );
+        }
+      }
+
+      if (place && place.location?.coordinates?.lat && place.location?.coordinates?.lng) {
+        results[name] = {
+          lat: place.location.coordinates.lat,
+          lng: place.location.coordinates.lng,
+          dbName: place.name
+        };
+      }
+    }
+
+    res.status(200).json({ success: true, results });
+  } catch (error) {
+    next(error);
+  }
+};
