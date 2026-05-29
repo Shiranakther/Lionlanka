@@ -35,7 +35,7 @@ const ArticleCard = ({ article, isSaved = false }) => {
     }
   };
 
-  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
   const coverImageUrl = article.coverImage ? (article.coverImage.startsWith('http') ? article.coverImage : `${API_URL}${article.coverImage}`) : null;
   const authorAvatarUrl = article.author?.profileImage ? (article.author.profileImage.startsWith('http') ? article.author.profileImage : `${API_URL}${article.author.profileImage}`) : null;
 

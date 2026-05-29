@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { MapPin, ArrowRight } from 'lucide-react';
 
 const PlaceCard = ({ place }) => {
-  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
   
   // Use first image if exists, else fallback
   const imageUrl = place.images && place.images.length > 0 

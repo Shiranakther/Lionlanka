@@ -55,7 +55,7 @@ const CreateArticle = () => {
             content: article.content || '',
             tags: article.tags || []
           });
-          const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+          const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
           if (article.coverImage) {
             const coverUrl = article.coverImage.startsWith('http') ? article.coverImage : `${API_URL}${article.coverImage}`;
             setPreviewImage(coverUrl);

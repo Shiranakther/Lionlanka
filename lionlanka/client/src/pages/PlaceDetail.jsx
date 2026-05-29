@@ -80,7 +80,7 @@ const PlaceDetail = () => {
   if (loading) return <div className="pt-20 p-10"><PlaceCardSkeleton /></div>;
   if (!place) return <div className="min-h-screen pt-32 text-center text-white">Place not found.</div>;
 
-  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
   const coverUrl = place.images?.[0] ? (place.images[0].startsWith('http') ? place.images[0] : `${API_URL}${place.images[0]}`) : null;
 
   return (

@@ -135,7 +135,7 @@ const ArticleDetail = () => {
   if (loading) return <div className="pt-20"><ArticleDetailSkeleton /></div>;
   if (!article) return <div className="min-h-screen pt-32 text-center"><h2 className="text-2xl text-white">Article not found.</h2></div>;
 
-  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
   const coverUrl = article.coverImage ? (article.coverImage.startsWith('http') ? article.coverImage : `${API_URL}${article.coverImage}`) : null;
   const authorImage = article.author?.profileImage ? (article.author.profileImage.startsWith('http') ? article.author.profileImage : `${API_URL}${article.author.profileImage}`) : null;
 
