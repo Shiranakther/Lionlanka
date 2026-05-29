@@ -47,5 +47,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </BrowserRouter>
       </HelmetProvider>
     </Provider>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 )
