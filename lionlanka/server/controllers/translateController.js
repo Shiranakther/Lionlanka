@@ -1,7 +1,6 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenAI } = require('@google/genai');
 
-// Initialize Gemini API
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const translateText = async (req, res) => {
   try {
@@ -11,8 +10,6 @@ const translateText = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Text and targetLanguage are required' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
-    
     const prompt = `Translate the following HTML content into ${targetLanguage}. 
     CRITICAL INSTRUCTIONS:
     1. Preserve all HTML tags, structure, and attributes exactly as they are.
@@ -23,9 +20,17 @@ const translateText = async (req, res) => {
     Content to translate:
     ${text}`;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    let translatedText = response.text();
+    const result = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: prompt,
+    });
+    
+    let translatedText = '';
+    if (result.candidates && result.candidates[0] && result.candidates[0].content) {
+        translatedText = result.candidates[0].content.parts[0].text;
+    } else {
+        throw new Error("No text returned from Gemini API");
+    }
     
     // Clean up any markdown blocks if the model accidentally included them
     translatedText = translatedText.replace(/^```html\n?/, '').replace(/^```\n?/, '').replace(/```$/, '');

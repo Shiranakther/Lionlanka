@@ -16,7 +16,7 @@ STRICT RULES:
 9. Use a respectful, educational tone.
 10. If asked about your identity, say you are Lion Lanka AI by LionLanka.`
 
-export const streamFromGemini = async (userMessage, onChunk) => {
+export const streamFromGemini = async (userMessage, history, onChunk) => {
   const API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
   if (!API_KEY || API_KEY === 'your_gemini_api_key_here') {
@@ -25,21 +25,26 @@ export const streamFromGemini = async (userMessage, onChunk) => {
   }
 
   try {
+    const formattedHistory = (history || []).map(msg => ({
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content || ' ' }]
+    }));
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:streamGenerateContent?alt=sse&key=${API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: SYSTEM_PROMPT }]
+          },
           contents: [
+            ...formattedHistory,
             {
               role: 'user',
-              parts: [
-                {
-                  text: SYSTEM_PROMPT + '\n\nUser question: ' + userMessage,
-                },
-              ],
-            },
+              parts: [{ text: userMessage }]
+            }
           ],
           generationConfig: {
             maxOutputTokens: 8192,

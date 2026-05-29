@@ -59,7 +59,7 @@ export const useChatbot = () => {
 
         let accumulatedContent = ''
 
-        await streamFromGemini(promptText.trim(), (chunk) => {
+        await streamFromGemini(promptText.trim(), messages, (chunk) => {
           accumulatedContent += chunk
           setMessages((prev) => 
             prev.map(msg => 
