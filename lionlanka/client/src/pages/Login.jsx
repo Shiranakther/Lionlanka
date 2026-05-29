@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { login, clearError, googleLogin } from '../store/authSlice';
-// If using Google OAuth, import component here
+import { useGoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -47,11 +47,15 @@ const Login = () => {
     dispatch(login({ email, password }));
   };
 
-  const handleGoogleLogin = () => {
-    // Basic wrapper for Google Login. In a real app, use @react-oauth/google.
-    // For now we just dispatch a dummy thunk or mock it for UI demonstration.
-    toast.error('Google OAuth not fully configured yet');
-  };
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      dispatch(googleLogin({ tokenId: codeResponse.access_token }));
+    },
+    onError: (error) => {
+      console.error('Google Login Error:', error);
+      toast.error('Google Login Failed');
+    }
+  });
 
   return (
     <motion.div
