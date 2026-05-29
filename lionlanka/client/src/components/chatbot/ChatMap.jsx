@@ -73,13 +73,17 @@ const ChatMap = ({ map, maps }) => {
   
   if (rawPoints.length === 0) return null;
 
+  const validPoints = points.filter(p => p.lat != null && p.lng != null && !isNaN(p.lat) && !isNaN(p.lng));
+
   // Calculate center and zoom
   let center = [7.8731, 80.7718]; // Default Sri Lanka center
   let zoom = 7;
 
-  if (points.length === 1) {
-    center = [points[0].lat, points[0].lng];
+  if (validPoints.length === 1) {
+    center = [validPoints[0].lat, validPoints[0].lng];
     zoom = 12;
+  } else if (validPoints.length === 0 && !loading) {
+    return null; // Don't show map if no valid points to show
   }
 
   return (
@@ -97,7 +101,7 @@ const ChatMap = ({ map, maps }) => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <MarkerClusterGroup>
-              {points.map((p, i) => (
+              {validPoints.map((p, i) => (
                 <Marker key={i} position={[p.lat, p.lng]}>
                   <Popup>
                     <div className="text-deep text-center">
@@ -120,7 +124,7 @@ const ChatMap = ({ map, maps }) => {
       {/* View Live Map Buttons */}
       {!loading && (
         <div className="flex flex-wrap gap-2 mt-2">
-          {points.map((p, i) => (
+          {validPoints.map((p, i) => (
             <a
               key={i}
               href={getGoogleMapsUrl(p.lat, p.lng, p.dbName || p.label)}
@@ -134,7 +138,7 @@ const ChatMap = ({ map, maps }) => {
                          backdrop-blur-sm group"
             >
               <MapPin size={12} className="text-red-400" />
-              <span>{points.length > 1 ? p.label : 'View Live Map'}</span>
+              <span>{validPoints.length > 1 ? p.label : 'View Live Map'}</span>
               <ExternalLink size={11} className="opacity-60 group-hover:opacity-100 transition-opacity" />
               {p.fromDb && (
                 <span className="ml-0.5 w-1.5 h-1.5 rounded-full bg-green-400" title="Exact coordinates from database" />
