@@ -95,10 +95,10 @@ exports.createArticle = async (req, res, next) => {
 
     if (req.files) {
       if (req.files.coverImage && req.files.coverImage.length > 0) {
-        req.body.coverImage = `/uploads/${req.files.coverImage[0].filename}`;
+        req.body.coverImage = req.files.coverImage[0].path;
       }
       if (req.files.images && req.files.images.length > 0) {
-        req.body.images = req.files.images.map(file => `/uploads/${file.filename}`);
+        req.body.images = req.files.images.map(file => file.path);
       }
     }
 
@@ -139,10 +139,10 @@ exports.updateArticle = async (req, res, next) => {
 
     if (req.files) {
       if (req.files.coverImage && req.files.coverImage.length > 0) {
-        req.body.coverImage = `/uploads/${req.files.coverImage[0].filename}`;
+        req.body.coverImage = req.files.coverImage[0].path;
       }
       if (req.files.images && req.files.images.length > 0) {
-        req.body.images = req.files.images.map(file => `/uploads/${file.filename}`);
+        req.body.images = req.files.images.map(file => file.path);
       }
     }
 
