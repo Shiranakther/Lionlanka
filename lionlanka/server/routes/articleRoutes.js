@@ -11,7 +11,7 @@ const {
   getArticleById
 } = require('../controllers/articleController');
 const { protect } = require('../middleware/authMiddleware');
-const upload = require('../middleware/upload');
+const { upload } = require('../middleware/upload');
 
 router.get('/', getArticles);
 router.get('/user/mine', protect, getMyArticles);

@@ -2,6 +2,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const { uploadToCloudinary } = require('../middleware/upload');
 
 // Helper function to generate JWT
 const generateToken = (id) => {
@@ -347,7 +348,7 @@ exports.uploadProfileImage = async (req, res, next) => {
         return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = await uploadToCloudinary(req.file.buffer, 'lionlanka/profiles');
     user.profileImage = imageUrl;
     await user.save();
 

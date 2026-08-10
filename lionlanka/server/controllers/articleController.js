@@ -1,5 +1,6 @@
 const Article = require('../models/Article');
 const User = require('../models/User');
+const { uploadToCloudinary } = require('../middleware/upload');
 
 // @desc    Get all articles
 // @route   GET /api/articles
@@ -95,10 +96,11 @@ exports.createArticle = async (req, res, next) => {
 
     if (req.files) {
       if (req.files.coverImage && req.files.coverImage.length > 0) {
-        req.body.coverImage = req.files.coverImage[0].path;
+        req.body.coverImage = await uploadToCloudinary(req.files.coverImage[0].buffer);
       }
       if (req.files.images && req.files.images.length > 0) {
-        req.body.images = req.files.images.map(file => file.path);
+        const imageUploadPromises = req.files.images.map(file => uploadToCloudinary(file.buffer));
+        req.body.images = await Promise.all(imageUploadPromises);
       }
     }
 
@@ -139,10 +141,11 @@ exports.updateArticle = async (req, res, next) => {
 
     if (req.files) {
       if (req.files.coverImage && req.files.coverImage.length > 0) {
-        req.body.coverImage = req.files.coverImage[0].path;
+        req.body.coverImage = await uploadToCloudinary(req.files.coverImage[0].buffer);
       }
       if (req.files.images && req.files.images.length > 0) {
-        req.body.images = req.files.images.map(file => file.path);
+        const imageUploadPromises = req.files.images.map(file => uploadToCloudinary(file.buffer));
+        req.body.images = await Promise.all(imageUploadPromises);
       }
     }
 

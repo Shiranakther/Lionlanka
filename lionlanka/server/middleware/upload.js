@@ -1,7 +1,6 @@
 const multer = require('multer');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Configure Cloudinary
 cloudinary.config({
@@ -10,14 +9,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Configure storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'lionlanka/articles',
-    allowed_formats: ['jpeg', 'jpg', 'png', 'gif', 'webp'],
-  },
-});
+// Use memory storage for Vercel serverless compatibility
+const storage = multer.memoryStorage();
 
 // File filter — allow only images
 const fileFilter = (req, file, cb) => {
@@ -46,4 +39,21 @@ const upload = multer({
   },
 });
 
-module.exports = upload;
+// Helper function to upload buffer to Cloudinary
+const uploadToCloudinary = (buffer, folder = 'lionlanka/articles') => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (result) {
+          resolve(result.secure_url);
+        } else {
+          reject(error);
+        }
+      }
+    );
+    stream.end(buffer);
+  });
+};
+
+module.exports = { upload, uploadToCloudinary };
