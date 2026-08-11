@@ -99,12 +99,19 @@ exports.googleAuth = async (req, res, next) => {
   try {
     const { tokenId } = req.body;
     
-    // Verify token with Google (placeholder fetch logic as requested)
-    const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${tokenId}`);
+    if (!tokenId) {
+      return res.status(400).json({ success: false, message: 'No token provided' });
+    }
+
+    // The client sends an access_token from useGoogleLogin().
+    // Use Google's UserInfo endpoint to get user details from the access token.
+    const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${tokenId}` },
+    });
     const googleUser = await googleRes.json();
     
-    if (googleUser.error) {
-         return res.status(401).json({ success: false, message: 'Invalid Google Token' });
+    if (googleUser.error || !googleUser.sub) {
+      return res.status(401).json({ success: false, message: 'Invalid Google Token' });
     }
 
     let user = await User.findOne({ $or: [{ googleId: googleUser.sub }, { email: googleUser.email }] });
